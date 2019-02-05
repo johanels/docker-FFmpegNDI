@@ -69,7 +69,8 @@ RUN buildDeps="autoconf \
                    apk  add --no-cache --update ${buildDeps}
 
 ## NewTek NDI Software Developer Kit 3.8 https://www.newtek.com/ndi/sdk/#download-sdk
-ADD ["NDI SDK for Linux", "/tmp/NDISDKLINUX"]
+ADD ["NDI SDK for Linux/lib/x86_64-linux-gnu/*", "/usr/lib/"]
+ADD ["NDI SDK for Linux", "/user/local/ndi/"]
 
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
 RUN \
@@ -321,12 +322,11 @@ RUN \
         rm -rf ${DIR}
 
 ## ffmpeg https://ffmpeg.org/
-RUN  \
-        DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
+RUN  DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         curl -sLO https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.bz2 && \
         tar -jx --strip-components=1 -f ffmpeg-${FFMPEG_VERSION}.tar.bz2
-RUN \
-        DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
+
+RUN cd ${DIR} && \
         ./configure \
         --disable-debug \
         --disable-doc \
@@ -338,28 +338,28 @@ RUN \
         --enable-gpl \
         --enable-libass \
         --enable-libfreetype \
-        --enable-libvidstab \
         --enable-libmp3lame \
+        --enable-libndi_newtek \
         --enable-libopenjpeg \
         --enable-libopus \
         --enable-libtheora \
+        --enable-libvidstab \
         --enable-libvorbis \
         --enable-libvpx \
+        --enable-libx264 \
         --enable-libx265 \
         --enable-libxvid \
-        --enable-libx264 \
-        --enable-libndi_newtek \
-        --extra-cflags="-I/tmp/NDISDKLINUX/include" --extra-ldflags="-L-I/tmp/NDISDKLINUX/include" \
         --enable-nonfree \
         --enable-openssl \
         --enable-libfdk_aac \
         --enable-libkvazaar \
-        --enable-libaom --extra-libs=-lpthread \
+        --enable-libaom \
+        --extra-libs=-lpthread \
         --enable-postproc \
         --enable-small \
         --enable-version3 \
-        --extra-cflags="-I${PREFIX}/include" \
-        --extra-ldflags="-L${PREFIX}/lib" \
+        --extra-cflags="-I${PREFIX}/include -I/user/local/ndi/include" \
+        --extra-ldflags="-L${PREFIX}/lib -L$/user/local/ndi/lib/x86_64-linux-gnu" \
         --extra-libs=-ldl \
         --prefix="${PREFIX}" && \
         make && \

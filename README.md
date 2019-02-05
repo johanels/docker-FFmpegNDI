@@ -1,6 +1,6 @@
-# Docker FFMPEG with NDI support
+# BETA: Docker FFMPEG with NDI support
 
-Because of the NewTel NDI SDK license agreement, we cannot distribute the SDK into a Docker image directly. Here I've tried to make compiling it in as simple as possible.
+Because of the NewTek NDI® SDK license agreement, we cannot distribute the SDK into a Docker image directly. Here I've tried to make compiling it in as simple as possible.
 
 Unfortunately we are using the Linux SDK so you will have to build the Docker image on Linux or MacOS.
 
@@ -11,7 +11,7 @@ git clone https://github.com/johanels/docker-FFMPEG.git
 cd docker-FFMPEG
 ```
 
-Now register and request the NewTek NDI Software Developer Kit 3.8 download link from https://www.newtek.com/ndi/sdk/#download-sdk into the repository folder. Make executable and run the file.
+Now register and request the NewTek NDI® Software Developer Kit download link from https://www.newtek.com/ndi/sdk/#download-sdk into the repository folder. Make executable and run the file.
 
 ```bash
 chmod 755 NDISDKLINUX
