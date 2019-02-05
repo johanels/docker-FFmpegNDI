@@ -2,7 +2,14 @@
 
 FROM  alpine:latest AS base
 
-RUN apk add --no-cache --update libgcc libstdc++ ca-certificates libcrypto1.0 libssl1.0 libgomp expat git
+RUN apk add --no-cache --update \
+      libgcc libstdc++ ca-certificates libcrypto1.0 libssl1.0 libgomp expat git
+
+# Add avahi for NDI discovery
+RUN apk add --no-cache --update avahi
+
+# Add libc6 as dependency for NDI
+RUN apk add --no-cache --update libc6-compat
 
 FROM  base AS build
 
@@ -326,20 +333,22 @@ RUN  DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         curl -sLO https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.bz2 && \
         tar -jx --strip-components=1 -f ffmpeg-${FFMPEG_VERSION}.tar.bz2
 
-RUN cd ${DIR} && \
+RUN DIR=/tmp/ffmpeg && cd ${DIR} && \
         ./configure \
         --disable-debug \
         --disable-doc \
         --disable-ffplay \
-        --enable-shared \
         --enable-avresample \
-        --enable-libopencore-amrnb \
-        --enable-libopencore-amrwb \
         --enable-gpl \
+        --enable-libaom \
         --enable-libass \
+        --enable-libfdk_aac \
         --enable-libfreetype \
+        --enable-libkvazaar \
         --enable-libmp3lame \
         --enable-libndi_newtek \
+        --enable-libopencore-amrnb \
+        --enable-libopencore-amrwb \
         --enable-libopenjpeg \
         --enable-libopus \
         --enable-libtheora \
@@ -351,15 +360,13 @@ RUN cd ${DIR} && \
         --enable-libxvid \
         --enable-nonfree \
         --enable-openssl \
-        --enable-libfdk_aac \
-        --enable-libkvazaar \
-        --enable-libaom \
-        --extra-libs=-lpthread \
         --enable-postproc \
+        --enable-shared \
         --enable-small \
         --enable-version3 \
         --extra-cflags="-I${PREFIX}/include -I/user/local/ndi/include" \
         --extra-ldflags="-L${PREFIX}/lib -L$/user/local/ndi/lib/x86_64-linux-gnu" \
+        --extra-libs=-lpthread \
         --extra-libs=-ldl \
         --prefix="${PREFIX}" && \
         make && \
