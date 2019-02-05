@@ -68,6 +68,9 @@ RUN buildDeps="autoconf \
                    expat-dev" && \
                    apk  add --no-cache --update ${buildDeps}
 
+## NewTek NDI Software Developer Kit 3.8 https://www.newtek.com/ndi/sdk/#download-sdk
+ADD ["NDI SDK for Linux", "/tmp/NDISDKLINUX"]
+
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
 RUN \
         DIR=/tmp/opencore-amr && \
@@ -345,6 +348,8 @@ RUN \
         --enable-libx265 \
         --enable-libxvid \
         --enable-libx264 \
+        --enable-libndi_newtek \
+        --extra-cflags="-I/tmp/NDISDKLINUX/include" --extra-ldflags="-L-I/tmp/NDISDKLINUX/include" \
         --enable-nonfree \
         --enable-openssl \
         --enable-libfdk_aac \
