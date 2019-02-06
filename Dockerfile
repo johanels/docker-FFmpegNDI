@@ -10,9 +10,7 @@ RUN apt-get install -y avahi-daemon avahi-utils
 # Add some other dependencies
 RUN apt-get install -y apt-utils libssl1.1 libglib2.0-0 libgomp1
 
-# Add libc6 as dependency for NDI
-# RUN apk add --no-cache --update libc6-compat
-
+# Create a Build Docker image
 FROM  base AS build
 
 WORKDIR     /tmp/workdir
@@ -84,138 +82,127 @@ RUN apt-get install -y autoconf \
 ADD ["NDI SDK for Linux", "/user/local/ndi/"]
 
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
-RUN \
-        DIR=/tmp/opencore-amr && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sL https://kent.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-${OPENCOREAMR_VERSION}.tar.gz | \
-        tar -zx --strip-components=1 && \
-        ./configure --prefix="${PREFIX}" --enable-shared  && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+RUN DIR=/tmp/opencore-amr && \
+    mkdir -p ${DIR} && \
+    cd ${DIR} && \
+    curl -sL https://kent.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-${OPENCOREAMR_VERSION}.tar.gz | \
+    tar -zx --strip-components=1 && \
+    ./configure --prefix="${PREFIX}" --enable-shared  && \
+    make && \
+    make install && \
+    rm -rf ${DIR}
 
 ## x264 http://www.videolan.org/developers/x264.html
-RUN \
-        DIR=/tmp/x264 && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sL https://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-${X264_VERSION}.tar.bz2 | \
-        tar -jx --strip-components=1 && \
-        ./configure --prefix="${PREFIX}" --enable-shared --enable-pic --disable-cli && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+RUN DIR=/tmp/x264 && \
+    mkdir -p ${DIR} && \
+    cd ${DIR} && \
+    curl -sL https://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-${X264_VERSION}.tar.bz2 | \
+    tar -jx --strip-components=1 && \
+    ./configure --prefix="${PREFIX}" --enable-shared --enable-pic --disable-cli && \
+    make && \
+    make install && \
+    rm -rf ${DIR}
 
 ### x265 http://x265.org/
-RUN \
-        DIR=/tmp/x265 && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sL https://download.videolan.org/pub/videolan/x265/x265_${X265_VERSION}.tar.gz  | \
-        tar -zx && \
-        cd x265_${X265_VERSION}/build/linux && \
-        sed -i "/-DEXTRA_LIB/ s/$/ -DCMAKE_INSTALL_PREFIX=\${PREFIX}/" multilib.sh && \
-        sed -i "/^cmake/ s/$/ -DENABLE_CLI=OFF/" multilib.sh && \
-        ./multilib.sh && \
-        make -C 8bit install && \
-        rm -rf ${DIR}
+RUN DIR=/tmp/x265 && \
+    mkdir -p ${DIR} && \
+    cd ${DIR} && \
+    curl -sL https://download.videolan.org/pub/videolan/x265/x265_${X265_VERSION}.tar.gz  | \
+    tar -zx && \
+    cd x265_${X265_VERSION}/build/linux && \
+    sed -i "/-DEXTRA_LIB/ s/$/ -DCMAKE_INSTALL_PREFIX=\${PREFIX}/" multilib.sh && \
+    sed -i "/^cmake/ s/$/ -DENABLE_CLI=OFF/" multilib.sh && \
+    ./multilib.sh && \
+    make -C 8bit install && \
+    rm -rf ${DIR}
 
 ### libogg https://www.xiph.org/ogg/
-RUN \
-        DIR=/tmp/ogg && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO http://downloads.xiph.org/releases/ogg/libogg-${OGG_VERSION}.tar.gz && \
-        echo ${OGG_SHA256SUM} | sha256sum --check && \
-        tar -zx --strip-components=1 -f libogg-${OGG_VERSION}.tar.gz && \
-        ./configure --prefix="${PREFIX}" --enable-shared  && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+RUN DIR=/tmp/ogg && \
+    mkdir -p ${DIR} && \
+    cd ${DIR} && \
+    curl -sLO http://downloads.xiph.org/releases/ogg/libogg-${OGG_VERSION}.tar.gz && \
+    echo ${OGG_SHA256SUM} | sha256sum --check && \
+    tar -zx --strip-components=1 -f libogg-${OGG_VERSION}.tar.gz && \
+    ./configure --prefix="${PREFIX}" --enable-shared  && \
+    make && \
+    make install && \
+    rm -rf ${DIR}
 
 ### libopus https://www.opus-codec.org/
-RUN \
-        DIR=/tmp/opus && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO https://archive.mozilla.org/pub/opus/opus-${OPUS_VERSION}.tar.gz && \
-        echo ${OPUS_SHA256SUM} | sha256sum --check && \
-        tar -zx --strip-components=1 -f opus-${OPUS_VERSION}.tar.gz && \
-        autoreconf -fiv && \
-        ./configure --prefix="${PREFIX}" --enable-shared && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+RUN DIR=/tmp/opus && \
+    mkdir -p ${DIR} && \
+    cd ${DIR} && \
+    curl -sLO https://archive.mozilla.org/pub/opus/opus-${OPUS_VERSION}.tar.gz && \
+    echo ${OPUS_SHA256SUM} | sha256sum --check && \
+    tar -zx --strip-components=1 -f opus-${OPUS_VERSION}.tar.gz && \
+    autoreconf -fiv && \
+    ./configure --prefix="${PREFIX}" --enable-shared && \
+    make && \
+    make install && \
+    rm -rf ${DIR}
 
 ### libvorbis https://xiph.org/vorbis/
-RUN \
-        DIR=/tmp/vorbis && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO http://downloads.xiph.org/releases/vorbis/libvorbis-${VORBIS_VERSION}.tar.gz && \
-        echo ${VORBIS_SHA256SUM} | sha256sum --check && \
-        tar -zx --strip-components=1 -f libvorbis-${VORBIS_VERSION}.tar.gz && \
-        ./configure --prefix="${PREFIX}" --with-ogg="${PREFIX}" --enable-shared && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+RUN DIR=/tmp/vorbis && \
+    mkdir -p ${DIR} && \
+    cd ${DIR} && \
+    curl -sLO http://downloads.xiph.org/releases/vorbis/libvorbis-${VORBIS_VERSION}.tar.gz && \
+    echo ${VORBIS_SHA256SUM} | sha256sum --check && \
+    tar -zx --strip-components=1 -f libvorbis-${VORBIS_VERSION}.tar.gz && \
+    ./configure --prefix="${PREFIX}" --with-ogg="${PREFIX}" --enable-shared && \
+    make && \
+    make install && \
+    rm -rf ${DIR}
 
 ### libtheora http://www.theora.org/
-RUN \
-        DIR=/tmp/theora && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO http://downloads.xiph.org/releases/theora/libtheora-${THEORA_VERSION}.tar.gz && \
-        echo ${THEORA_SHA256SUM} | sha256sum --check && \
-        tar -zx --strip-components=1 -f libtheora-${THEORA_VERSION}.tar.gz && \
-        ./configure --prefix="${PREFIX}" --with-ogg="${PREFIX}" --enable-shared && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+RUN DIR=/tmp/theora && \
+    mkdir -p ${DIR} && \
+    cd ${DIR} && \
+    curl -sLO http://downloads.xiph.org/releases/theora/libtheora-${THEORA_VERSION}.tar.gz && \
+    echo ${THEORA_SHA256SUM} | sha256sum --check && \
+    tar -zx --strip-components=1 -f libtheora-${THEORA_VERSION}.tar.gz && \
+    ./configure --prefix="${PREFIX}" --with-ogg="${PREFIX}" --enable-shared && \
+    make && \
+    make install && \
+    rm -rf ${DIR}
 
 ### libvpx https://www.webmproject.org/code/
-RUN \
-        DIR=/tmp/vpx && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sL https://codeload.github.com/webmproject/libvpx/tar.gz/v${VPX_VERSION} | \
-        tar -zx --strip-components=1 && \
-        ./configure --prefix="${PREFIX}" --enable-vp8 --enable-vp9 --enable-vp9-highbitdepth --enable-pic --enable-shared \
-        --disable-debug --disable-examples --disable-docs --disable-install-bins  && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+RUN DIR=/tmp/vpx && \
+    mkdir -p ${DIR} && \
+    cd ${DIR} && \
+    curl -sL https://codeload.github.com/webmproject/libvpx/tar.gz/v${VPX_VERSION} | \
+    tar -zx --strip-components=1 && \
+    ./configure --prefix="${PREFIX}" --enable-vp8 --enable-vp9 --enable-vp9-highbitdepth --enable-pic --enable-shared \
+    --disable-debug --disable-examples --disable-docs --disable-install-bins  && \
+    make && \
+    make install && \
+    rm -rf ${DIR}
 
 ### libmp3lame http://lame.sourceforge.net/
-RUN \
-        DIR=/tmp/lame && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sL https://kent.dl.sourceforge.net/project/lame/lame/$(echo ${LAME_VERSION} | sed -e 's/[^0-9]*\([0-9]*\)[.]\([0-9]*\)[.]\([0-9]*\)\([0-9A-Za-z-]*\)/\1.\2/')/lame-${LAME_VERSION}.tar.gz | \
-        tar -zx --strip-components=1 && \
-        ./configure --prefix="${PREFIX}" --bindir="${PREFIX}/bin" --enable-shared --enable-nasm --enable-pic --disable-frontend && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+RUN DIR=/tmp/lame && \
+    mkdir -p ${DIR} && \
+    cd ${DIR} && \
+    curl -sL https://kent.dl.sourceforge.net/project/lame/lame/$(echo ${LAME_VERSION} | sed -e 's/[^0-9]*\([0-9]*\)[.]\([0-9]*\)[.]\([0-9]*\)\([0-9A-Za-z-]*\)/\1.\2/')/lame-${LAME_VERSION}.tar.gz | \
+    tar -zx --strip-components=1 && \
+    ./configure --prefix="${PREFIX}" --bindir="${PREFIX}/bin" --enable-shared --enable-nasm --enable-pic --disable-frontend && \
+    make && \
+    make install && \
+    rm -rf ${DIR}
 
 ### xvid https://www.xvid.com/
-RUN \
-        DIR=/tmp/xvid && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO http://downloads.xvid.org/downloads/xvidcore-${XVID_VERSION}.tar.gz && \
-        echo ${XVID_SHA256SUM} | sha256sum --check && \
-        tar -zx -f xvidcore-${XVID_VERSION}.tar.gz && \
-        cd xvidcore/build/generic && \
-        ./configure --prefix="${PREFIX}" --bindir="${PREFIX}/bin" --datadir="${DIR}" --enable-shared --enable-shared && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+RUN DIR=/tmp/xvid && \
+    mkdir -p ${DIR} && \
+    cd ${DIR} && \
+    curl -sLO http://downloads.xvid.org/downloads/xvidcore-${XVID_VERSION}.tar.gz && \
+    echo ${XVID_SHA256SUM} | sha256sum --check && \
+    tar -zx -f xvidcore-${XVID_VERSION}.tar.gz && \
+    cd xvidcore/build/generic && \
+    ./configure --prefix="${PREFIX}" --bindir="${PREFIX}/bin" --datadir="${DIR}" --enable-shared --enable-shared && \
+    make && \
+    make install && \
+    rm -rf ${DIR}
 
 ### fdk-aac https://github.com/mstorsjo/fdk-aac
-RUN \
-        DIR=/tmp/fdk-aac && \
+RUN DIR=/tmp/fdk-aac && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sL https://github.com/mstorsjo/fdk-aac/archive/v${FDKAAC_VERSION}.tar.gz | \

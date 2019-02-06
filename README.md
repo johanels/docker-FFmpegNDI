@@ -30,10 +30,9 @@ docker run -it --expose 49152-65535 -p 5353:5353 ffmpegNDI -f libndi_newtek -fin
 
 CURRENT DEBUG:
 ```bash
-docker run -it -p 5353:5353/udp --network bridge --entrypoint='bash' ffmpeg
+docker run -it -p 5353:5353 --network bridge --entrypoint='bash' ffmpeg
 LD_LIBRARY_PATH=/usr/local/lib ffmpeg -f libndi_newtek -find_sources 1 -i dummy
 ```
-
 
 Credits:
 * FFmpeg - https://www.ffmpeg.org
