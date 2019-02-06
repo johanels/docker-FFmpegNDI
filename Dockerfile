@@ -1,19 +1,23 @@
 # ffmpeg - http://ffmpeg.org/download.html
 
-FROM  alpine:latest AS base
+FROM debian:stretch-slim AS base
 
-RUN apk add --no-cache --update \
-      libgcc libstdc++ ca-certificates libcrypto1.0 libssl1.0 libgomp expat git
+RUN apt-get update && apt-get upgrade
 
 # Add avahi for NDI discovery
-RUN apk add --no-cache --update avahi
+RUN apt-get install -y avahi-daemon avahi-utils
+
+# Add some other dependencies
+RUN apt-get install -y apt-utils libssl1.1 libglib2.0-0 libgomp1
 
 # Add libc6 as dependency for NDI
-RUN apk add --no-cache --update libc6-compat
+# RUN apk add --no-cache --update libc6-compat
 
 FROM  base AS build
 
 WORKDIR     /tmp/workdir
+
+RUN apt-get install -y libgcc-6-dev libstdc++ ca-certificates libcrypto++-dev expat git
 
 ARG PKG_CONFIG_PATH=/opt/ffmpeg/lib/pkgconfig
 ARG LD_LIBRARY_PATH=/opt/ffmpeg/lib
@@ -52,31 +56,31 @@ ARG         LIBVIDSTAB_SHA256SUM="14d2a053e56edad4f397be0cb3ef8eb1ec3150404ce99a
 ARG         LIBASS_SHA256SUM="8fadf294bf701300d4605e6f1d92929304187fca4b8d8a47889315526adbafd7  0.13.7.tar.gz"
 ARG         FRIBIDI_SHA256SUM="3fc96fa9473bd31dcb5500bdf1aa78b337ba13eb8c301e7c28923fea982453a8  0.19.7.tar.gz"
 
-RUN buildDeps="autoconf \
-                   automake \
-                   bash \
-                   binutils \
-                   bzip2 \
-                   cmake \
-                   curl \
-                   coreutils \
-                   diffutils \
-                   file \
-                   g++ \
-                   gcc \
-                   gperf \
-                   libtool \
-                   make \
-                   python \
-                   openssl-dev \
-                   tar \
-                   yasm \
-                   zlib-dev \
-                   expat-dev" && \
-                   apk  add --no-cache --update ${buildDeps}
+RUN apt-get install -y autoconf \
+        automake \
+        bash \
+        binutils \
+        bzip2 \
+        cmake \
+        curl \
+        coreutils \
+        diffutils \
+        file \
+        g++ \
+        gcc \
+        gperf \
+        libexpat-dev \
+        libglib2.0-dev \
+        libssl-dev \
+        libtool \
+        make \
+        python \
+        tar \
+        yasm \
+        zlib1g-dev
 
 ## NewTek NDI Software Developer Kit 3.8 https://www.newtek.com/ndi/sdk/#download-sdk
-ADD ["NDI SDK for Linux/lib/x86_64-linux-gnu/*", "/usr/lib/"]
+# ADD ["NDI SDK for Linux/lib/x86_64-linux-gnu/*", "/usr/lib/"]
 ADD ["NDI SDK for Linux", "/user/local/ndi/"]
 
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
@@ -365,7 +369,7 @@ RUN DIR=/tmp/ffmpeg && cd ${DIR} && \
         --enable-small \
         --enable-version3 \
         --extra-cflags="-I${PREFIX}/include -I/user/local/ndi/include" \
-        --extra-ldflags="-L${PREFIX}/lib -L$/user/local/ndi/lib/x86_64-linux-gnu" \
+        --extra-ldflags="-L${PREFIX}/lib -L/user/local/ndi/lib/x86_64-linux-gnu" \
         --extra-libs=-lpthread \
         --extra-libs=-ldl \
         --prefix="${PREFIX}" && \
@@ -377,9 +381,9 @@ RUN DIR=/tmp/ffmpeg && cd ${DIR} && \
         make qt-faststart && \
         cp qt-faststart ${PREFIX}/bin
 
-RUN \
-    ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i cp {} /usr/local/lib/ && \
+RUN ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i cp {} /usr/local/lib/ && \
     cp ${PREFIX}/bin/* /usr/local/bin/ && \
+    cp /user/local/ndi/lib/x86_64-linux-gnu/* /usr/local/lib/ && \
     cp -r ${PREFIX}/share/ffmpeg /usr/local/share/ && \
     LD_LIBRARY_PATH=/usr/local/lib ffmpeg -buildconf
 
