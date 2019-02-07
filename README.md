@@ -29,6 +29,18 @@ List available NDI® sources:
 docker run -it --rm --network bridge --expose 5353 --expose 49152-65535 ffmpegndi -f libndi_newtek -find_sources 1 -i dummy
 ```
 
+Stream file to NDI output:
+```bash
+docker run -it --rm --network bridge --expose 5353 --expose 49152-65535 -v ~/Downloads/:/temp/ ffmpegndi -i /temp/input.mp4 -f libndi_newtek -pix_fmt uyvy422 Sample
+```
+
+Debug:
+```bash
+docker run -it --rm --network bridge --expose 5353 --expose 5353/udp --expose 49152-65535 -v ~/Downloads/:/temp/ --entrypoint='bash' ffmpegndi
+  avahi-daemon -D
+  ffmpeg -i /temp/input.mp4 -f libndi_newtek -pix_fmt uyvy422 Sample
+```
+
 Credits:
 * FFmpeg - https://www.ffmpeg.org
 * NewTek NDI® SDK - https://www.newtek.com/ndi/sdk/

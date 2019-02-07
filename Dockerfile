@@ -6,6 +6,7 @@ RUN apt-get update && apt-get upgrade
 
 # Add avahi for NDI discovery
 RUN apt-get install -y avahi-daemon avahi-utils
+ADD configs/avahi-daemon.conf /etc/avahi/avahi-daemon.conf
 
 # Add some other dependencies
 RUN apt-get install -y apt-utils libssl1.1 libglib2.0-0 libgomp1
@@ -380,6 +381,7 @@ MAINTAINER  Johan Els <johan@who-els.co.za>
 
 ENV LD_LIBRARY_PATH /usr/local/lib
 CMD         ["--help"]
-ENTRYPOINT  ["ffmpeg"]
+ADD ["scripts/entrypoint.sh", "/usr/local/bin/"]
+ENTRYPOINT  ["entrypoint.sh"]
 
 COPY --from=build /usr/local /usr/local
