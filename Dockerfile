@@ -378,6 +378,7 @@ RUN ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i cp {
 FROM        base AS release
 MAINTAINER  Johan Els <johan@who-els.co.za>
 
+ENV LD_LIBRARY_PATH /usr/local/lib
 CMD         ["--help"]
 ENTRYPOINT  ["ffmpeg"]
 

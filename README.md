@@ -21,16 +21,16 @@ chmod 755 NDISDKLINUX
 Read and accept the license agreement. You should now have a new folder in the repository directory called "NDI SDK for Linux". You can now build the Docker image and in the Dockerfile it should copy the NDI SDK files into the image as part of the build.
 
 ```bash
-docker build . -t ffmpegNDI
+docker build . -t ffmpegndi
 ```
 
 ```bash
-docker run -it --expose 49152-65535 -p 5353:5353 ffmpegNDI -f libndi_newtek -find_sources 1 -i dummy
+docker run -it --expose 49152-65535 -p 5353:5353 ffmpegndi -f libndi_newtek -find_sources 1 -i dummy
 ```
 
 CURRENT DEBUG:
 ```bash
-docker run -it -p 5353:5353 --network bridge --entrypoint='bash' ffmpeg
+docker run -it -p 5353:5353 --network bridge --entrypoint='bash' ffmpegndi
 LD_LIBRARY_PATH=/usr/local/lib ffmpeg -f libndi_newtek -find_sources 1 -i dummy
 ```
 
