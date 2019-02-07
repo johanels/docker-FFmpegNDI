@@ -24,14 +24,9 @@ Read and accept the license agreement. You should now have a new folder in the r
 docker build . -t ffmpegndi
 ```
 
+List available NDI® sources:
 ```bash
-docker run -it --expose 49152-65535 -p 5353:5353 ffmpegndi -f libndi_newtek -find_sources 1 -i dummy
-```
-
-CURRENT DEBUG:
-```bash
-docker run -it -p 5353:5353 --network bridge --entrypoint='bash' ffmpegndi
-LD_LIBRARY_PATH=/usr/local/lib ffmpeg -f libndi_newtek -find_sources 1 -i dummy
+docker run -it --rm --network bridge --expose 5353 --expose 49152-65535 ffmpegndi -f libndi_newtek -find_sources 1 -i dummy
 ```
 
 Credits:
