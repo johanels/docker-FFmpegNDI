@@ -80,7 +80,7 @@ RUN apt-get install -y autoconf \
 
 ## NewTek NDI Software Developer Kit 3.8 https://www.newtek.com/ndi/sdk/#download-sdk
 # ADD ["NDI SDK for Linux/lib/x86_64-linux-gnu/*", "/usr/lib/"]
-ADD ["NDI SDK for Linux", "/user/local/ndi/"]
+ADD ["NDI SDK for Linux", "/usr/local/ndi/"]
 
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
 RUN DIR=/tmp/opencore-amr && \
@@ -356,8 +356,8 @@ RUN DIR=/tmp/ffmpeg && cd ${DIR} && \
         --enable-shared \
         --enable-small \
         --enable-version3 \
-        --extra-cflags="-I${PREFIX}/include -I/user/local/ndi/include" \
-        --extra-ldflags="-L${PREFIX}/lib -L/user/local/ndi/lib/x86_64-linux-gnu" \
+        --extra-cflags="-I${PREFIX}/include -I/usr/local/ndi/include" \
+        --extra-ldflags="-L${PREFIX}/lib -L/usr/local/ndi/lib/x86_64-linux-gnu" \
         --extra-libs=-lpthread \
         --extra-libs=-ldl \
         --prefix="${PREFIX}" && \
