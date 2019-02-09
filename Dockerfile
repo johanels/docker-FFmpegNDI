@@ -371,7 +371,7 @@ RUN DIR=/tmp/ffmpeg && cd ${DIR} && \
 
 RUN ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i cp {} /usr/local/lib/ && \
     cp ${PREFIX}/bin/* /usr/local/bin/ && \
-    cp /user/local/ndi/lib/x86_64-linux-gnu/* /usr/local/lib/ && \
+    cp /usr/local/ndi/lib/x86_64-linux-gnu/* /usr/local/lib/ && \
     cp -r ${PREFIX}/share/ffmpeg /usr/local/share/ && \
     LD_LIBRARY_PATH=/usr/local/lib ffmpeg -buildconf
 
