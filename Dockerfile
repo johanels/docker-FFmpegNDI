@@ -329,7 +329,6 @@ RUN DIR=/tmp/ffmpeg && cd ${DIR} && \
         ./configure \
         --disable-debug \
         --disable-doc \
-        --disable-ffplay \
         --enable-avresample \
         --enable-gpl \
         --enable-libaom \
