@@ -332,7 +332,7 @@ RUN DIR=/tmp/ffmpeg && cd ${DIR} && \
         --enable-libx264 \
         --enable-nonfree \
         --extra-cflags="-I${PREFIX}/include -I/usr/local/ndi/include" \
-        --extra-ldflags="-L${PREFIX}/lib -L/usr/local/ndi/lib/i686-linux-gnu" \
+        --extra-ldflags="-L${PREFIX}/lib -L/usr/local/ndi/lib/x86_64-linux-gnu" \
         --prefix="${PREFIX}" && \
         make && \
         make install && \

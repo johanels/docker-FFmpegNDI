@@ -38,52 +38,6 @@ docker build . -t ffmpegndi
 docker run -it --rm --name ffmpegndi --network host --expose 5353 --expose 5353/udp --expose 49152-65535 -v ~/Downloads/:/temp/ --entrypoint='bash' ffmpegndi
 ```
 
-## MacOS
-Compiling FFMPEG with NewTek NDI® on MacOS is also a challenge, but here is what I have. Download NewTek NDI® for MacOS and install it. It dumps itself in the root of the drive, which I'm not happy about, but what can we do?
-
-### Building
-
-```bash
-brew install automake fdk-aac git lame libass libtool libvorbis libvpx opus sdl shtool texi2html theora wget x264 x265 xvid nasm
-
-git clone http://source.ffmpeg.org/git/ffmpeg.git ffmpeg
-
-cd ffmpeg
-
-ln -s /NewTek\ NDI\ SDK/ ndi
-sudo ln -s /usr/local/lib/libndi.3.dylib /usr/local/lib/libndi.dylib
-
-./configure  --prefix=/usr/local \
-  --enable-gpl \
-  --enable-libass \
-  --enable-libfdk-aac \
-  --enable-libfreetype \
-  --enable-libmp3lame \
-  --enable-libndi_newtek \
-  --enable-libopus \
-  --enable-libtheora \
-  --enable-libvorbis \
-  --enable-libvpx \
-  --enable-libx264 \
-  --enable-libx265 \
-  --enable-libxvid \
-  --enable-nonfree \
-  --extra-cflags="-I$HOME/Development/ffmpeg/ndi/include" \
-  --extra-ldflags="-L$HOME/Development/ffmpeg/ndi/lib/i686" \
-  --extra-libs="-lpthread -lm" \
-  --samples=fate-suite/
-
-./configure --enable-nonfree \
-  --enable-gpl \
-  --enable-libndi_newtek \
-  --enable-libx264 \
-  --enable-nonfree \
-  --extra-cflags="-I$HOME/Development/ffmpeg/ndi/include" \
-  --extra-ldflags="-L$HOME/Development/ffmpeg/ndi/lib/i686"
-
-make
-```
-
 ## FFmpeg Commands
 
 ### List available NDI® sources:
