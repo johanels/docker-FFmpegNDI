@@ -327,12 +327,38 @@ RUN  DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
 
 RUN DIR=/tmp/ffmpeg && cd ${DIR} && \
         ./configure \
+        --disable-debug \
+        --disable-doc \
+        --enable-avresample \
         --enable-gpl \
+        --enable-libaom \
+        --enable-libass \
+        --enable-libfdk_aac \
+        --enable-libfreetype \
+        --enable-libkvazaar \
+        --enable-libmp3lame \
         --enable-libndi_newtek \
+        --enable-libopencore-amrnb \
+        --enable-libopencore-amrwb \
+        --enable-libopenjpeg \
+        --enable-libopus \
+        --enable-libtheora \
+        --enable-libvidstab \
+        --enable-libvorbis \
+        --enable-libvpx \
         --enable-libx264 \
+        --enable-libx265 \
+        --enable-libxvid \
         --enable-nonfree \
+        --enable-openssl \
+        --enable-postproc \
+        --enable-shared \
+        --enable-small \
+        --enable-version3 \
         --extra-cflags="-I${PREFIX}/include -I/usr/local/ndi/include" \
-        --extra-ldflags="-L${PREFIX}/lib -L/usr/local/ndi/lib/i686-linux-gnu" \
+        --extra-ldflags="-L${PREFIX}/lib -L/usr/local/ndi/lib/x86_64-linux-gnu" \
+        --extra-libs=-lpthread \
+        --extra-libs=-ldl \
         --prefix="${PREFIX}" && \
         make && \
         make install && \

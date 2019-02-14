@@ -45,17 +45,42 @@ Compiling FFMPEG with NewTek NDI® on MacOS is also a challenge, but here is wha
 
 ```bash
 brew install automake fdk-aac git lame libass libtool libvorbis libvpx opus sdl shtool texi2html theora wget x264 x265 xvid nasm
+
 git clone http://source.ffmpeg.org/git/ffmpeg.git ffmpeg
+
 cd ffmpeg
+
 ln -s /NewTek\ NDI\ SDK/ ndi
-./configure  --prefix=/usr/local --enable-gpl --enable-nonfree --enable-libass \
---enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libtheora \
---enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 \
---enable-libopus --enable-libxvid \
---enable-libndi_newtek \
---extra-cflags="-Indi/include" \
---extra-ldflags="-L/usr/local/lib" \
---samples=fate-suite/
+sudo ln -s /usr/local/lib/libndi.3.dylib /usr/local/lib/libndi.dylib
+
+./configure  --prefix=/usr/local \
+  --enable-gpl \
+  --enable-libass \
+  --enable-libfdk-aac \
+  --enable-libfreetype \
+  --enable-libmp3lame \
+  --enable-libndi_newtek \
+  --enable-libopus \
+  --enable-libtheora \
+  --enable-libvorbis \
+  --enable-libvpx \
+  --enable-libx264 \
+  --enable-libx265 \
+  --enable-libxvid \
+  --enable-nonfree \
+  --extra-cflags="-I$HOME/Development/ffmpeg/ndi/include" \
+  --extra-ldflags="-L$HOME/Development/ffmpeg/ndi/lib/i686" \
+  --extra-libs="-lpthread -lm" \
+  --samples=fate-suite/
+
+./configure --enable-nonfree \
+  --enable-gpl \
+  --enable-libndi_newtek \
+  --enable-libx264 \
+  --enable-nonfree \
+  --extra-cflags="-I$HOME/Development/ffmpeg/ndi/include" \
+  --extra-ldflags="-L$HOME/Development/ffmpeg/ndi/lib/i686"
+
 make
 ```
 
@@ -70,8 +95,8 @@ docker run -it --rm ffmpegndi -f libndi_newtek -extra_ips "10.10.10.100" -find_s
 
 ### Stream file to NDI output:
 ```bash
-ffmpeg -i /temp/input.mp4 -f libndi_newtek -pix_fmt uyvy422 OUTPUT
-docker run -it --rm --network host --expose 5353 --expose 49152-65535 -v ~/Downloads/:/temp/ ffmpegndi -i /temp/input.mp4 -f libndi_newtek -pix_fmt uyvy422 OUTPUT
+ffmpeg -re -i /temp/input.mp4 -f libndi_newtek -pix_fmt uyvy422 OUTPUT
+docker run -it --rm --network host --expose 5353 --expose 49152-65535 -v $PWD/:/temp/ ffmpegndi -re -i /temp/input.mp4 -f libndi_newtek -pix_fmt uyvy422 OUTPUT
 ```
 
 ### Point-to-Point Stream:
@@ -94,3 +119,5 @@ ffplay -f libndi_newtek -i "Sample"
 * NewTek NDI® port information - https://support.newtek.com/hc/en-us/articles/218109497-NDI-Video-Data-Flow
 * docker - https://www.docker.com
 * jrottenberg - https://hub.docker.com/r/jrottenberg/ffmpeg
+* Raspberry Pi
+** Build FFmpeg and mpv – Automatically in 54 Minutes! - https://www.raspberrypi.org/forums/viewtopic.php?t=199775
