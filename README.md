@@ -71,7 +71,6 @@ ffplay -f libndi_newtek -i "Sample"
 ** MacOS Compiling yourself -  https://trac.ffmpeg.org/wiki/CompilationGuide/macOS#CompilingFFmpegyourself
 * NewTek NDI® SDK - https://www.newtek.com/ndi/sdk/
 * NewTek NDI® port information - https://support.newtek.com/hc/en-us/articles/218109497-NDI-Video-Data-Flow
+* NewTek NDI® network guidelines - https://forums.newtek.com/attachment.php?attachmentid=141895&d=1527693707
 * docker - https://www.docker.com
 * jrottenberg - https://hub.docker.com/r/jrottenberg/ffmpeg
-* Raspberry Pi
-** Build FFmpeg and mpv – Automatically in 54 Minutes! - https://www.raspberrypi.org/forums/viewtopic.php?t=199775
