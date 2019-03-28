@@ -1,4 +1,21 @@
-# BETA: Docker FFMPEG with NDI support
+# DECEASED: Docker FFMPEG with NDI support
+
+*NDI support in FFmpeg was removed in the FFMPEG source on the 20th of March 2019.
+
+https://github.com/FFmpeg/FFmpeg/commit/4b32f8b3ebfa011fcc5991bcaa97c3f5b61b49ad
+
+This is from a license dispute with Newtek ( https://trac.ffmpeg.org/ticket/7589 ) and NDI support has now been removed from FFmpeg.
+
+I will take these projects offline.
+
+Apologies for the inconvenience.
+
+Regards,
+
+Johan Els
+*
+
+# OLD README.md
 
 Because of the NewTek NDI® SDK license agreement, we cannot distribute the SDK into a Docker image directly. Here I've tried to make compiling it as simple as possible and then use this version to build a point2point NDI link over the Internet. The theory is that if you can get NDI into and out of FFmpeg, FFmpeg has a documented point2point streaming documented on their site.
 
